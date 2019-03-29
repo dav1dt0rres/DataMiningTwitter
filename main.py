@@ -1,5 +1,6 @@
 import xlrd
 import nltk
+
 import sklearn 
 
 from Tweet import Tweet
@@ -7,7 +8,7 @@ from Database import Database
 from collections import Counter
 
 
-def get_rare_words(Database,threshold):
+def get_rare_words(database,threshold):
     word_list = []
     for tweet in database.Table:
         for word in tweet.stemmedList:
@@ -34,7 +35,8 @@ if __name__ == '__main__':
     output_total = 0
 
     # path to the file you want to extract data from
-    src = r'D:\CS 583\Project 2\trainingObamaRomneytweets.xlsx'
+
+    src = r'C:\Users\david\Downloads\trainingObamaRomneytweets.xlsx'
 
     book = xlrd.open_workbook(src)
 
@@ -54,27 +56,19 @@ if __name__ == '__main__':
         tweet= Tweet(tweet_text,tweet_class);
         tweet.Cleanself();
         tweet.TagPOS();
+        #print("After POS",tweet.WordList);
         tweet.lemmatize();
-
+        #print("After Lemmatized",tweet.stemmedList);
         #tweet.Stemself();
-        #tweet.SpellCheck();
+
 
         database.add(tweet);
         #print("Size so far",database.getSize());
         current_row+=1;
 
-    #Vectorizing
-    rare_words = get_rare_words(database,1)
-    stopwords=nltk.corpus.stopwords.words('english')
-    wordsToIgnore = list(set(stopwords + rare_words))
+    database.Vectorizeself();
 
-    vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer='word',tokenizer=lambda x: x,preprocessor=lambda x: x,token_pattern=None,stop_words=wordsToIgnore)
 
-    stemmedTexts=[o.stemmedList for o in database.Table]
-    vectorizer.fit(stemmedTexts)
-
-    trainingVector = vectorizer.transform(stemmedTexts)
-    print(trainingVector.shape)
 
     
     print("Writing on Text")

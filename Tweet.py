@@ -4,6 +4,7 @@ import re
 from Spell import Spell
 import string
 import nltk
+
 from nltk.stem.porter import *
 from nltk.stem import *
 from nltk.corpus import wordnet
@@ -175,7 +176,7 @@ class Tweet:
         return self.WordList
     def removePunctuations(self):
         self.TweetText = self.TweetText.replace("'s","")
-        self.TweetText = self.TweetText.replace("'","")
+        #self.TweetText = self.TweetText.replace("'","")
         self.TweetText = self.TweetText.translate(str.maketrans(string.punctuation,' '*len(string.punctuation)))
         
     def Cleanself(self): #simply compare the overall number of lines in both Lists
@@ -225,7 +226,7 @@ class Tweet:
         try:
             self.WordList = nltk.pos_tag(self.WordList)
         except:
-            print('')
+            print('errorTagPos')
         
         
     def lemmatize(self):
@@ -243,5 +244,6 @@ class Tweet:
                 else:
                     tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.NOUN))
             except:
-                print('')
+                print("Erros lemmatizer")
+
         self.stemmedList = tokens
