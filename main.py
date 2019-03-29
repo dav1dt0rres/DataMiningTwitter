@@ -66,6 +66,28 @@ if __name__ == '__main__':
         #print("Size so far",database.getSize());
         current_row+=1;
 
+    work_sheet = book.sheet_by_index(0)
+
+    # get the total number of rows
+    num_rows = work_sheet.nrows - 1
+    while current_row < num_rows:
+        tweet_text = work_sheet.cell_value(current_row,3 )
+        tweet_class= work_sheet.cell_value(current_row,4 )
+        # print ("Tweet going in",tweet_text)
+        tweet= Tweet(tweet_text,tweet_class);
+        tweet.Cleanself();
+        tweet.TagPOS();
+        #print("After POS",tweet.WordList);
+        tweet.lemmatize();
+        #print("After Lemmatized",tweet.stemmedList);
+        #tweet.Stemself();
+
+
+        database.add(tweet);
+        #print("Size so far",database.getSize());
+        current_row+=1;
+
+
     database.Vectorizeself();
 
 
