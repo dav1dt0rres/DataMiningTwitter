@@ -70,6 +70,9 @@ if __name__ == '__main__':
 
     # get the total number of rows
     num_rows = work_sheet.nrows - 1
+    print("Inside second insertion");
+    current_row=0;
+    counter=0
     while current_row < num_rows:
         tweet_text = work_sheet.cell_value(current_row,3 )
         tweet_class= work_sheet.cell_value(current_row,4 )
@@ -77,7 +80,7 @@ if __name__ == '__main__':
         tweet= Tweet(tweet_text,tweet_class);
         tweet.Cleanself();
         tweet.TagPOS();
-        #print("After POS",tweet.WordList);
+
         tweet.lemmatize();
         #print("After Lemmatized",tweet.stemmedList);
         #tweet.Stemself();
@@ -86,6 +89,7 @@ if __name__ == '__main__':
         database.add(tweet);
         #print("Size so far",database.getSize());
         current_row+=1;
+        counter+=1;
 
 
     database.Vectorizeself();

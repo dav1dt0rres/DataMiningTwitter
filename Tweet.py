@@ -175,6 +175,7 @@ class Tweet:
         print("WordList returing",self.WordList)
         return self.WordList
     def removePunctuations(self):
+
         self.TweetText = self.TweetText.replace("'s","")
         #self.TweetText = self.TweetText.replace("'","")
         self.TweetText = self.TweetText.translate(str.maketrans(string.punctuation,' '*len(string.punctuation)))
