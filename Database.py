@@ -17,7 +17,7 @@ class Database:
         return word
 
     def write(self,bit):
-        OpenFile3= open(r"C:\Users\david\Documents\OutputDatamining.txt", 'a')
+        OpenFile3= open(r"D:\CS 583\OutputDatamining.txt", 'a')
         if (bit==1):#Full (Cleaned)-->upper or lower?
 
 

@@ -3,10 +3,10 @@ from __future__ import print_function
 import re
 from Spell import Spell
 import string
-
+import nltk
 from nltk.stem.porter import *
 from nltk.stem import *
-
+from nltk.corpus import wordnet
 class Tweet:
 
     #Queue contains a list of lines only for that firm. (Function Excel)
@@ -137,6 +137,7 @@ class Tweet:
         self.TweetText=tweet_text
         self.Class=tweet_class;
         self.stemmedList=[]
+        self.lemmatizer = nltk.stem.wordnet.WordNetLemmatizer()
 
     def SpellCheck(self):
         spell = Spell()
@@ -172,9 +173,15 @@ class Tweet:
         self.WordList=filter(lambda x: x in printable, self.WordList)
         print("WordList returing",self.WordList)
         return self.WordList
+    def removePunctuations(self):
+        self.TweetText = self.TweetText.replace("'s","")
+        self.TweetText = self.TweetText.replace("'","")
+        self.TweetText = self.TweetText.translate(str.maketrans(string.punctuation,' '*len(string.punctuation)))
+        
     def Cleanself(self): #simply compare the overall number of lines in both Lists
         index=0;
-        self.WordList=self.TweetText.split();
+        self.removePunctuations()
+        self.WordList=nltk.word_tokenize(self.TweetText);
         #print("wordlist",self.WordList)
         for word in self.WordList:
             #print("before",word)
@@ -214,4 +221,27 @@ class Tweet:
 
         #for word in self.WordList:
             #print("List in a",word);
-
+    def TagPOS(self):
+        try:
+            self.WordList = nltk.pos_tag(self.WordList)
+        except:
+            print('')
+        
+        
+    def lemmatize(self):
+        tokens = []
+        for token in self.WordList:
+            try:
+                if token[1].startswith('N'):
+                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.NOUN))
+                elif token[1].startswith('J'):
+                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.ADJ))
+                elif token[1].startswith('R'):
+                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.ADV))
+                elif token[1].startswith('V'):
+                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.VERB))
+                else:
+                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.NOUN))
+            except:
+                print('')
+        self.stemmedList = tokens
