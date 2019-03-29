@@ -12,7 +12,7 @@ class Database:
 
     def __init__(self):
         print("Initialization of Join")
-
+        self.trainingVector=[];
         self.Table=[];
 
     def LastClean(self,word):
@@ -65,10 +65,10 @@ class Database:
         stemmedTexts=[o.stemmedList for o in self.Table]
         print("after FIt",vectorizer.fit(stemmedTexts))
 
-        trainingVector = vectorizer.transform(stemmedTexts)
-        print("after transform",trainingVector.toarray())
+        self.trainingVector = vectorizer.transform(stemmedTexts)
+        print("after transform",self.trainingVector.toarray())
 
-        print(trainingVector.shape)
+        print(self.trainingVector.shape)
     def get_rare_words(self,threshold):#self=database
         word_list = []
         for tweet in self.Table:
