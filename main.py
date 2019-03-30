@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     # path to the file you want to extract data from
 
-    src = r'C:\Users\david\Downloads\trainingObamaRomneytweets.xlsx'
+    src = r'D:\CS 583\Project 2\trainingObamaRomneytweets.xlsx'
 
     book = xlrd.open_workbook(src)
 
@@ -53,16 +53,17 @@ if __name__ == '__main__':
         tweet_text = work_sheet.cell_value(current_row,3 )
         tweet_class= work_sheet.cell_value(current_row,4 )
        # print ("Tweet going in",tweet_text)
-        tweet= Tweet(tweet_text,tweet_class);
-        tweet.Cleanself();
-        tweet.TagPOS();
-        #print("After POS",tweet.WordList);
-        tweet.lemmatize();
-        #print("After Lemmatized",tweet.stemmedList);
-        #tweet.Stemself();
+        if (tweet_class == 1) or (tweet_class == 0) or (tweet_class == -1):
+            tweet= Tweet(tweet_text,tweet_class);
+            tweet.Cleanself();
+            tweet.TagPOS();
+            #print("After POS",tweet.WordList);
+            tweet.lemmatize();
+            #print("After Lemmatized",tweet.stemmedList);
+            #tweet.Stemself();
 
 
-        database.add(tweet);
+            database.add(tweet);
         #print("Size so far",database.getSize());
         current_row+=1;
 
@@ -77,24 +78,27 @@ if __name__ == '__main__':
         tweet_text = work_sheet.cell_value(current_row,3 )
         tweet_class= work_sheet.cell_value(current_row,4 )
         # print ("Tweet going in",tweet_text)
-        tweet= Tweet(tweet_text,tweet_class);
-        tweet.Cleanself();
-        tweet.TagPOS();
+        if (tweet_class == 1) or (tweet_class == 0) or (tweet_class == -1):
+            tweet= Tweet(tweet_text,tweet_class);
+            tweet.Cleanself();
+            tweet.TagPOS();
 
-        tweet.lemmatize();
-        #print("After Lemmatized",tweet.stemmedList);
-        #tweet.Stemself();
+            tweet.lemmatize();
+            #print("After Lemmatized",tweet.stemmedList);
+            #tweet.Stemself();
 
 
-        database.add(tweet);
+            database.add(tweet);
         #print("Size so far",database.getSize());
         current_row+=1;
         counter+=1;
 
 
     database.Vectorizeself();
-
-
+    database.CreateClassVector()
+    database.TrainMultinomialNaiveBias()
+    database.TrainLinearSVM()
+    database.TrainRandomForest()
 
     
     print("Writing on Text")
