@@ -135,7 +135,7 @@ class Tweet:
         }
         self.stemmer = PorterStemmer()
         self.WordList = []
-        self.TweetText=tweet_text
+        self.TweetText=str(tweet_text)
         self.Class=tweet_class;
         self.stemmedList=[]
         self.lemmatizer = nltk.stem.wordnet.WordNetLemmatizer()
@@ -175,19 +175,20 @@ class Tweet:
         print("WordList returing",self.WordList)
         return self.WordList
     def removePunctuations(self):
-
         self.TweetText = self.TweetText.replace("'s","")
-        #self.TweetText = self.TweetText.replace("'","")
+        self.TweetText = self.TweetText.replace("'","")
         self.TweetText = self.TweetText.translate(str.maketrans(string.punctuation,' '*len(string.punctuation)))
-        
+
     def Cleanself(self): #simply compare the overall number of lines in both Lists
         index=0;
+        self.TweetText = re.sub(r'http\S+', '', self.TweetText)
+        self.TweetText = self.TweetText.replace('</a>', '').replace('</e>', '').replace('<e>','').replace('<a>', '')
         self.removePunctuations()
         self.WordList=nltk.word_tokenize(self.TweetText);
         #print("wordlist",self.WordList)
         for word in self.WordList:
             #print("before",word)
-            word=word.replace('</a>', '').replace('</e>', '').replace('<e>','').replace('<a>', '')
+            #word=word.replace('</a>', '').replace('</e>', '').replace('<e>','').replace('<a>', '')
 
             regex= re.compile('[$;%&*"“”#,@.!():?]')
             word=regex.sub('', word)
@@ -222,14 +223,14 @@ class Tweet:
 
 
         #for word in self.WordList:
-            #print("List in a",word);
+        #print("List in a",word);
     def TagPOS(self):
         try:
             self.WordList = nltk.pos_tag(self.WordList)
         except:
             print('errorTagPos')
-        
-        
+
+
     def lemmatize(self):
         tokens = []
         for token in self.WordList:
