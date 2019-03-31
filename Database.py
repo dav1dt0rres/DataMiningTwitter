@@ -117,7 +117,7 @@ class Database:
         clf = MultinomialNB()
 
         scores = cross_validate(clf,self.trainingVector , self.classVector, scoring=make_scorer(self.classification_report_with_accuracy_score),
-                        cv=5, return_train_score=False)
+                                cv=5, return_train_score=False)
 
         #print("Keys",sorted(scores.keys()))
 

@@ -1,7 +1,7 @@
 import xlrd
 import nltk
 
-import sklearn
+import sklearn 
 
 from Tweet import Tweet
 from Database import Database
@@ -13,13 +13,13 @@ def get_rare_words(database,threshold):
     for tweet in database.Table:
         for word in tweet.stemmedList:
             word_list.append(word)
-
+            
     counts = Counter(word_list)
     rare_words = []
     for word in word_list:
         if counts[word] <= threshold:
             rare_words.append(word)
-
+            
     rare_words = sorted(rare_words)
     return rare_words
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     # path to the file you want to extract data from
 
-    src = r'C:\Users\david\Downloads\trainingObamaRomneytweets.xlsx'
+    src = r'D:\CS 583\Project 2\trainingObamaRomneytweets.xlsx'
 
     book = xlrd.open_workbook(src)
 
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     while current_row < num_rows:
         tweet_text = work_sheet.cell_value(current_row,3 )
         tweet_class= work_sheet.cell_value(current_row,4 )
-        # print ("Tweet going in",tweet_text)
+       # print ("Tweet going in",tweet_text)
         if (tweet_class == 1) or (tweet_class == 0) or (tweet_class == -1):
             tweet= Tweet(tweet_text,tweet_class);
             tweet.Cleanself();
@@ -100,7 +100,8 @@ if __name__ == '__main__':
     database.TrainLinearSVM()
     database.TrainRandomForest()
 
-
+    
     print("Writing on Text")
     database.write(2);#1->print just Full text, #2--> pring Stemmed data,-->#3 basically (1) AND sPELL CHECK
     exit(0);
+
