@@ -22,7 +22,7 @@ class Database:
     #Queue contains a list of lines only for that firm. (Function Excel)
 
     def __init__(self):
-        print("Initialization of Join")
+        #print("Initialization of Join")
         self.trainingVector=[];
         self.Table=[];
         self.classVector=[]
@@ -66,7 +66,7 @@ class Database:
         return len(self.Table)
 
     def Vectorizeself(self):
-        print("Inside Vectorizing")
+        #print("Inside Vectorizing")
         #Vectorizing
         rare_words = self.get_rare_words(1)
         stopwords=nltk.corpus.stopwords.words('english')
@@ -80,10 +80,10 @@ class Database:
         vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer='word',tokenizer=lambda x: x,preprocessor=lambda x: x,token_pattern=None,stop_words=wordsToIgnore)
 
         stemmedTexts=[o.stemmedList for o in self.Table]
-        print("after FIt",vectorizer.fit(stemmedTexts))
+        vectorizer.fit(stemmedTexts)
 
         self.trainingVector = vectorizer.transform(stemmedTexts)
-        print("after transform",self.trainingVector.toarray())
+        #print("after transform",self.trainingVector.toarray())
 
         print(self.trainingVector.shape)
     def get_rare_words(self,threshold):#self=database
@@ -117,7 +117,7 @@ class Database:
         clf = MultinomialNB()
 
         scores = cross_validate(clf,self.trainingVector , self.classVector, scoring=make_scorer(self.classification_report_with_accuracy_score),
-                                cv=5, return_train_score=False)
+                                cv=10, return_train_score=False)
 
         #print("Keys",sorted(scores.keys()))
 
@@ -141,7 +141,7 @@ class Database:
         scoring = ['precision_macro', 'recall_macro','f1_weighted']
         clf = OneVsOneClassifier(LinearSVC(random_state=0))
         scores = cross_validate(clf,self.trainingVector, self.classVector, scoring=make_scorer(self.classification_report_with_accuracy_score),
-                                cv=5, return_train_score=False)
+                                cv=10, return_train_score=False)
 
         print("Scores for LinearSVM.....")
         print(scores)
@@ -154,7 +154,7 @@ class Database:
         #X_train, X_valid, y_train, y_valid = train_test_split(self.trainingVector, self.classVector, test_size = 0.1, shuffle = True)
         clf = RandomForestClassifier(n_estimators=10)
         scores = cross_validate(clf,self.trainingVector, self.classVector, scoring=make_scorer(self.classification_report_with_accuracy_score),
-                                cv=5, return_train_score=False)
+                                cv=10, return_train_score=False)
 
         print("Scores for Random Forest.....")
         print(scores)

@@ -7,7 +7,11 @@ import nltk
 
 from nltk.stem.porter import *
 from nltk.stem import *
-from nltk.corpus import wordnet
+from nltk.corpus import wordnet as wn 
+
+
+
+
 class Tweet:
 
     #Queue contains a list of lines only for that firm. (Function Excel)
@@ -133,6 +137,48 @@ class Tweet:
             "you're": "you are",
             "you've": "you have"
         }
+
+        self.tag_map = {
+            'CC':None, # coordin. conjunction (and, but, or)  
+            'CD':wn.NOUN, # cardinal number (one, two)             
+            'DT':None, # determiner (a, the)                    
+            'EX':wn.ADV, # existential ‘there’ (there)           
+            'FW':None, # foreign word (mea culpa)             
+            'IN':wn.ADV, # preposition/sub-conj (of, in, by)
+            'JJ':wn.ADJ, # adjective (yellow)                  
+            'JJR':wn.ADJ, # adj., comparative (bigger)          
+            'JJS':wn.ADJ, # adj., superlative (wildest)           
+            'LS':None, # list item marker (1, 2, One)          
+            'MD':None, # modal (can, should)                    
+            'NN':wn.NOUN, # noun, sing. or mass (llama)          
+            'NNS':wn.NOUN, # noun, plural (llamas)                  
+            'NNP':wn.NOUN, # proper noun, sing. (IBM)              
+            'NNPS':wn.NOUN, # proper noun, plural (Carolinas)
+            'PDT':wn.ADJ_SAT, # predeterminer (all, both)            
+            'POS':None, # possessive ending (’s )               
+            'PRP':None, # personal pronoun (I, you, he)     
+            'PRP$':None, # possessive pronoun (your, one’s)    
+            'RB':wn.ADV, # adverb (quickly, never)            
+            'RBR':wn.ADV, # adverb, comparative (faster)        
+            'RBS':wn.ADV, # adverb, superlative (fastest)     
+            'RP':wn.ADJ, # particle (up, off)
+            'SYM':None, # symbol (+,%, &)
+            'TO':None, # “to” (to)
+            'UH':None, # interjection (ah, oops)
+            'VB':wn.VERB, # verb base form (eat)
+            'VBD':wn.VERB, # verb past tense (ate)
+            'VBG':wn.VERB, # verb gerund (eating)
+            'VBN':wn.VERB, # verb past participle (eaten)
+            'VBP':wn.VERB, # verb non-3sg pres (eat)
+            'VBZ':wn.VERB, # verb 3sg pres (eats)
+            'WDT':None, # wh-determiner (which, that)
+            'WP':None, # wh-pronoun (what, who)
+            'WP$':None, # possessive (wh- whose)
+            'WRB':None, # wh-adverb (how, where)
+        }
+
+
+
         self.stemmer = PorterStemmer()
         self.WordList = []
         self.TweetText=str(tweet_text)
@@ -228,24 +274,16 @@ class Tweet:
         try:
             self.WordList = nltk.pos_tag(self.WordList)
         except:
-            print('errorTagPos')
+            pass
 
 
     def lemmatize(self):
         tokens = []
         for token in self.WordList:
+            #print(token[0],token[1], self.tag_map[token[1]])
             try:
-                if token[1].startswith('N'):
-                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.NOUN))
-                elif token[1].startswith('J'):
-                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.ADJ))
-                elif token[1].startswith('R'):
-                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.ADV))
-                elif token[1].startswith('V'):
-                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.VERB))
-                else:
-                    tokens.append(self.lemmatizer.lemmatize(token[0],pos=wordnet.NOUN))
+               tokens.append(self.lemmatizer.lemmatize(token[0],pos=self.tag_map[token[1]]))
             except:
-                print("Erros lemmatizer")
+                pass
 
         self.stemmedList = tokens

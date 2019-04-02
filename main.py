@@ -45,8 +45,8 @@ if __name__ == '__main__':
 
     # get the total number of rows
     num_rows = work_sheet.nrows - 1
-    database=Database();
-
+    romneyDatabase=Database();
+    obamaDatabase = Database()
 
 
     while current_row < num_rows:
@@ -63,7 +63,7 @@ if __name__ == '__main__':
             #tweet.Stemself();
 
 
-            database.add(tweet);
+            romneyDatabase.add(tweet);
         #print("Size so far",database.getSize());
         current_row+=1;
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     # get the total number of rows
     num_rows = work_sheet.nrows - 1
-    print("Inside second insertion");
+    #print("Inside second insertion");
     current_row=0;
     counter=0
     while current_row < num_rows:
@@ -88,20 +88,29 @@ if __name__ == '__main__':
             #tweet.Stemself();
 
 
-            database.add(tweet);
+            obamaDatabase.add(tweet);
         #print("Size so far",database.getSize());
         current_row+=1;
         counter+=1;
 
+    print("Cross validation on Romney Tweets:")
+    romneyDatabase.Vectorizeself();
+    romneyDatabase.CreateClassVector()
+    romneyDatabase.TrainMultinomialNaiveBias()
+    romneyDatabase.TrainLinearSVM()
+    romneyDatabase.TrainRandomForest()
 
-    database.Vectorizeself();
-    database.CreateClassVector()
-    database.TrainMultinomialNaiveBias()
-    database.TrainLinearSVM()
-    database.TrainRandomForest()
+    print("Cross validation on Obama Tweets:")
+    obamaDatabase.Vectorizeself();
+    obamaDatabase.CreateClassVector()
+    obamaDatabase.TrainMultinomialNaiveBias()
+    obamaDatabase.TrainLinearSVM()
+    obamaDatabase.TrainRandomForest()
+
+
 
     
-    print("Writing on Text")
-    database.write(2);#1->print just Full text, #2--> pring Stemmed data,-->#3 basically (1) AND sPELL CHECK
+    #print("Writing on Text")
+    #database.write(2);#1->print just Full text, #2--> pring Stemmed data,-->#3 basically (1) AND sPELL CHECK
     exit(0);
 
