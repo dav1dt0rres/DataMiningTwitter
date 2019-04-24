@@ -17,6 +17,20 @@ from sklearn.metrics import classification_report, accuracy_score, make_scorer
 import nltk
 
 
+import numpy as np
+
+from keras.models import Sequential
+
+from keras.layers.core import Dense, Dropout, Activation
+
+from keras.optimizers import Adadelta,Adam,RMSprop
+
+from keras.utils import np_utils
+
+
+
+
+
 class Database:
 
     #Queue contains a list of lines only for that firm. (Function Excel)
@@ -65,7 +79,7 @@ class Database:
     def getSize(self):
         return len(self.Table)
 
-    def Vectorizeself(self):
+    def Vectorizeself(self, ngram_range=(1, 2)):
         #print("Inside Vectorizing")
         #Vectorizing
         rare_words = self.get_rare_words(1)
@@ -77,12 +91,13 @@ class Database:
         #quit()
         wordsToIgnore = list(set(stopwords + rare_words))
 
-        vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer='word',tokenizer=lambda x: x,preprocessor=lambda x: x,token_pattern=None,stop_words=wordsToIgnore)
+        vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer='word',max_features=10000,tokenizer=lambda x: x,preprocessor=lambda x: x,token_pattern=None,stop_words=wordsToIgnore, ngram_range=ngram_range)
 
         stemmedTexts=[o.stemmedList for o in self.Table]
         vectorizer.fit(stemmedTexts)
 
-        self.trainingVector = vectorizer.transform(stemmedTexts)
+        self.trainingVector = vectorizer.transform(stemmedTexts).todense()
+        print(self.trainingVector.shape)
         #print("after transform",self.trainingVector.toarray())
 
         print(self.trainingVector.shape)
@@ -106,6 +121,7 @@ class Database:
     def classification_report_with_accuracy_score(self,y_true, y_pred):
 
         print (classification_report(y_true, y_pred)) # print classification report
+        print(accuracy_score(y_true, y_pred))
         return accuracy_score(y_true, y_pred) # return accuracy score
 
 
@@ -166,3 +182,39 @@ class Database:
         #y_pred = clf.predict(X_valid)
         #print('Random forest: accuracy %s' % accuracy_score(y_pred, y_valid))
         #print(classification_report(y_valid, y_pred,target_names=['-1.0','0.0','1.0']))
+	
+    def TrainNeuralNet(self):
+        X_train, X_valid, y_train, y_valid = train_test_split(self.trainingVector, self.classVector, test_size = 0.1, shuffle = True)
+        numberOfClasses = 3
+        batchSize = 64
+        nbEpochs = 10
+
+        Y_train = np_utils.to_categorical(y_train, numberOfClasses)
+        Y_valid = np_utils.to_categorical(y_valid, numberOfClasses)
+
+
+        #print(Y_train)
+        #print(y_train)
+        #quit()
+        model = Sequential()
+        model.add(Dense(1000,input_shape=(10000,)))
+        model.add(Activation('relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(500))
+        model.add(Activation('relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(50))
+        model.add(Activation('relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(numberOfClasses))
+        model.add(Activation('softmax'))
+        model.compile(loss='categorical_crossentropy', optimizer='adam',metrics=['accuracy'] )
+        print(model.summary())
+        model.fit(X_train, Y_train,validation_data=(X_valid,Y_valid),batch_size=batchSize,epochs = nbEpochs, verbose=1, )
+
+        #y_pred = model.predict(X_valid, batch_size=batchSize)
+        #print(y_pred)
+        #print(y_valid)
+        #print('Neural Net: accuracy %s' % accuracy_score(y_pred, y_valid))
+        #print(classification_report(y_valid, y_pred,target_names=['-1.0','0.0','1.0']))
+

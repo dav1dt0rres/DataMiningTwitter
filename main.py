@@ -94,18 +94,19 @@ if __name__ == '__main__':
         counter+=1;
 
     print("Cross validation on Romney Tweets:")
-    romneyDatabase.Vectorizeself();
+    romneyDatabase.Vectorizeself((2,2));
     romneyDatabase.CreateClassVector()
-    romneyDatabase.TrainMultinomialNaiveBias()
-    romneyDatabase.TrainLinearSVM()
-    romneyDatabase.TrainRandomForest()
+    #romneyDatabase.TrainMultinomialNaiveBias()
+    #romneyDatabase.TrainLinearSVM()
+    #romneyDatabase.TrainRandomForest()
 
     print("Cross validation on Obama Tweets:")
-    obamaDatabase.Vectorizeself();
+    obamaDatabase.Vectorizeself((2,2));
     obamaDatabase.CreateClassVector()
-    obamaDatabase.TrainMultinomialNaiveBias()
-    obamaDatabase.TrainLinearSVM()
-    obamaDatabase.TrainRandomForest()
+    #obamaDatabase.TrainMultinomialNaiveBias()
+    #obamaDatabase.TrainLinearSVM()
+    #obamaDatabase.TrainRandomForest()
+    obamaDatabase.TrainNeuralNet()
 
 
 
