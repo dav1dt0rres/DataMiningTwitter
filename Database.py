@@ -13,6 +13,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import recall_score
 from sklearn.metrics import classification_report, accuracy_score, make_scorer
+from sklearn.pipeline import FeatureUnion
+from KeySignals import KeySignals
+from Pos_Neg import Negative
+from Pos_Neg import Positive
 
 import nltk
 
@@ -30,12 +34,12 @@ class Database:
     def LastClean(self,word):
 
         word=word.replace('</a>', '').replace('</e>', '').replace('<e>','').replace('<a>', '');
-        regex= re.compile('[$%&*#,@.!():?]')
+        regex= re.compile('[$%&*#,@.():?]')
         word=regex.sub('', word)
         return word
 
     def write(self,bit):
-        OpenFile3= open(r"D:\CS 583\OutputDatamining.txt", 'a')
+        OpenFile3= open(r"C:\Users\david\Documents\OutputDatamining", 'a')
         if (bit==1):#Full (Cleaned)-->upper or lower?
 
 
@@ -64,6 +68,29 @@ class Database:
         self.Table.append(Tweet)
     def getSize(self):
         return len(self.Table)
+    def Vectorizeself_2(self,lines_pos,lines_neg):
+        rare_words = self.get_rare_words(1)
+        stopwords=nltk.corpus.stopwords.words('english')
+        for i in range(0,len(stopwords)):
+            stopwords[i] = stopwords[i].replace("'","")
+
+        stemmedLists=[o.stemmedList for o in self.Table]
+
+        wordsToIgnore = list(set(stopwords + rare_words))
+
+        vectorizer = FeatureUnion(transformer_list=[
+            ('word_vectorizer', sklearn.feature_extraction.text.TfidfVectorizer(analyzer='word',tokenizer=lambda x: x,preprocessor=lambda x: x,token_pattern=None,stop_words=wordsToIgnore)
+             ),('keywords',KeySignals()),(
+                'neg',Negative(lines_neg)),
+            ('pos',Positive(lines_pos))
+        ])
+        self.trainingVector=vectorizer.fit(stemmedLists).transform(stemmedLists)
+
+        print("WHATEVER",vectorizer.fit(stemmedLists).transform(stemmedLists))
+        input()
+        #print("Transform",vectorizer.transform(stemmedLists))
+
+        #self.trainingVector = vectorizer.transform(stemmedLists)
 
     def Vectorizeself(self):
         print("Inside Vectorizing")
@@ -80,12 +107,15 @@ class Database:
         vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer='word',tokenizer=lambda x: x,preprocessor=lambda x: x,token_pattern=None,stop_words=wordsToIgnore)
 
         stemmedTexts=[o.stemmedList for o in self.Table]
-        print("after FIt",vectorizer.fit(stemmedTexts))
+        print("after FIt",vectorizer.fit(stemmedTexts)) #selecting the features
 
-        self.trainingVector = vectorizer.transform(stemmedTexts)
+        self.trainingVector = vectorizer.transform(stemmedTexts) #does this tweet contain this feature?
+        print("This is many faetures",self.trainingVector.shape)
         print("after transform",self.trainingVector.toarray())
 
-        print(self.trainingVector.shape)
+
+        print('shape',self.trainingVector.shape)
+        input()
     def get_rare_words(self,threshold):#self=database
         word_list = []
         for tweet in self.Table:
@@ -106,6 +136,7 @@ class Database:
     def classification_report_with_accuracy_score(self,y_true, y_pred):
 
         print (classification_report(y_true, y_pred)) # print classification report
+        print("ACCURACy",accuracy_score(y_true, y_pred) )
         return accuracy_score(y_true, y_pred) # return accuracy score
 
 
@@ -117,7 +148,7 @@ class Database:
         clf = MultinomialNB()
 
         scores = cross_validate(clf,self.trainingVector , self.classVector, scoring=make_scorer(self.classification_report_with_accuracy_score),
-                                cv=5, return_train_score=False)
+                                cv=10, return_train_score=False)
 
         #print("Keys",sorted(scores.keys()))
 
@@ -127,21 +158,12 @@ class Database:
         print(scores)
 
 
-        #clf.fit(X_train,y_train)
-        #y_pred = clf.predict(X_valid)
-        #print('Multinomial Naive Bayes accuracy: %s' % accuracy_score(y_pred, y_valid))
-
-        #print(classification_report(y_valid, y_pred,target_names=['-1.0','0.0','1.0']))
-
-
-        #print(y_pred)
-
     def TrainLinearSVM(self):
         #X_train, X_valid, y_train, y_valid = train_test_split(self.trainingVector, self.classVector, test_size = 0.1, shuffle = True)
         scoring = ['precision_macro', 'recall_macro','f1_weighted']
         clf = OneVsOneClassifier(LinearSVC(random_state=0))
         scores = cross_validate(clf,self.trainingVector, self.classVector, scoring=make_scorer(self.classification_report_with_accuracy_score),
-                                cv=5, return_train_score=False)
+                                cv=10, return_train_score=False)
 
         print("Scores for LinearSVM.....")
         print(scores)
@@ -154,7 +176,7 @@ class Database:
         #X_train, X_valid, y_train, y_valid = train_test_split(self.trainingVector, self.classVector, test_size = 0.1, shuffle = True)
         clf = RandomForestClassifier(n_estimators=10)
         scores = cross_validate(clf,self.trainingVector, self.classVector, scoring=make_scorer(self.classification_report_with_accuracy_score),
-                                cv=5, return_train_score=False)
+                                cv=10, return_train_score=False)
 
         print("Scores for Random Forest.....")
         print(scores)

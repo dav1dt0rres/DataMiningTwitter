@@ -190,7 +190,7 @@ class Tweet:
             #print("before",word)
             #word=word.replace('</a>', '').replace('</e>', '').replace('<e>','').replace('<a>', '')
 
-            regex= re.compile('[$;%&*"“”#,@.!():?]')
+            regex= re.compile('[$;%&*"“”#,@.():?]')
             word=regex.sub('', word)
             word=word.lower();
             #print("after",word)
