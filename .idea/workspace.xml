@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6b94d67f-4e30-4e48-afc9-942f83483c18" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/KeySignals.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Pos_Neg.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Database.py" beforeDir="false" afterPath="$PROJECT_DIR$/Database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tweet.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tweet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,8 +19,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="119" column="4" selection-start-line="119" selection-start-column="4" selection-end-line="119" selection-end-column="4" />
+            <state relative-caret-position="79">
+              <caret line="105" column="29" lean-forward="true" selection-start-line="105" selection-start-column="29" selection-end-line="105" selection-end-column="29" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -171,7 +166,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1556132476178" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1556132753390" />
     <property name="last_opened_file_path" value="$USER_HOME$/Downloads/sudokui" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -240,7 +235,7 @@
       <workItem from="1554689432882" duration="8000" />
       <workItem from="1555969806563" duration="14499000" />
       <workItem from="1556057131550" duration="601000" />
-      <workItem from="1556064076149" duration="20817000" />
+      <workItem from="1556064076149" duration="21022000" />
     </task>
     <task id="LOCAL-00001" summary="&quot;Database Commit&quot;">
       <created>1553895450547</created>
@@ -277,14 +272,22 @@
       <option name="project" value="LOCAL" />
       <updated>1554002634531</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="&quot;Added 2 extra features&quot;">
+      <created>1556132601851</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1556132601851</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="116219000" />
+    <option name="totallyTimeSpent" value="116424000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2574899" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -389,7 +392,8 @@
     <MESSAGE value="&quot;Read two worksheets&quot;" />
     <MESSAGE value="&quot;Read two worksheets_final&quot;" />
     <MESSAGE value="&quot;Added Cross Validation&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="&quot;Added Cross Validation&quot;" />
+    <MESSAGE value="&quot;Added 2 extra features&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;Added 2 extra features&quot;" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../TwitterDataMining/venv/Lib/site-packages/xlrd/__init__.py">
@@ -466,8 +470,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="119" column="4" selection-start-line="119" selection-start-column="4" selection-end-line="119" selection-end-column="4" />
+        <state relative-caret-position="79">
+          <caret line="105" column="29" lean-forward="true" selection-start-line="105" selection-start-column="29" selection-end-line="105" selection-end-column="29" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
