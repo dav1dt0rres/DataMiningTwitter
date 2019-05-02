@@ -1,5 +1,6 @@
 import xlrd
 import nltk
+import pickle
 
 import sklearn 
 
@@ -94,19 +95,24 @@ if __name__ == '__main__':
         counter+=1;
 
     print("Cross validation on Romney Tweets:")
-    romneyDatabase.Vectorizeself((2,2));
+    romneyDatabase.Vectorizeself('RomneyVectorizer.pickle');
     romneyDatabase.CreateClassVector()
-    #romneyDatabase.TrainMultinomialNaiveBias()
+    romneyDatabase.TrainLinearSVM('RomneyLinearSVM.pickle')
     #romneyDatabase.TrainLinearSVM()
     #romneyDatabase.TrainRandomForest()
 
     print("Cross validation on Obama Tweets:")
-    obamaDatabase.Vectorizeself((2,2));
+    obamaDatabase.Vectorizeself('ObamaVectorizer.pickle');
+    #pickle.dump(vectorizer, open("vectorizer.pickle", "wb"))
     obamaDatabase.CreateClassVector()
     #obamaDatabase.TrainMultinomialNaiveBias()
-    #obamaDatabase.TrainLinearSVM()
+    #f= open("ObamaLinear.txt","wt")
+    obamaDatabase.TrainLinearSVM('ObamaLinearSVM.pickle')
     #obamaDatabase.TrainRandomForest()
-    obamaDatabase.TrainNeuralNet()
+    #obamaDatabase.TrainNeuralNet()
+    #obamaDatabase.TrainLogisticRegression()
+    #obamaDatabase.Test('LinearSVM.sav',src)
+
 
 
 

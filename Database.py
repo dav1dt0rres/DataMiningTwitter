@@ -13,23 +13,18 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import recall_score
 from sklearn.metrics import classification_report, accuracy_score, make_scorer
+from sklearn.linear_model import LogisticRegression
+from sklearn.externals import joblib
 
 import nltk
+from sklearn.model_selection import StratifiedKFold
 
 
-import numpy as np
+import xlrd
+from Tweet import Tweet
+from collections import Counter
 
-from keras.models import Sequential
-
-from keras.layers.core import Dense, Dropout, Activation
-
-from keras.optimizers import Adadelta,Adam,RMSprop
-
-from keras.utils import np_utils
-
-
-
-
+import pickle
 
 class Database:
 
@@ -40,6 +35,7 @@ class Database:
         self.trainingVector=[];
         self.Table=[];
         self.classVector=[]
+        self.vectorizer=None;
 
     def LastClean(self,word):
 
@@ -79,7 +75,12 @@ class Database:
     def getSize(self):
         return len(self.Table)
 
-    def Vectorizeself(self, ngram_range=(1, 2)):
+    def tokenizer(self,x):
+        return x
+    def preprocessor(self,x):
+        return x
+
+    def Vectorizeself(self,vectorizerFile):
         #print("Inside Vectorizing")
         #Vectorizing
         rare_words = self.get_rare_words(1)
@@ -91,16 +92,19 @@ class Database:
         #quit()
         wordsToIgnore = list(set(stopwords + rare_words))
 
-        vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer='word',max_features=10000,tokenizer=lambda x: x,preprocessor=lambda x: x,token_pattern=None,stop_words=wordsToIgnore, ngram_range=ngram_range)
-
+        vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer='word',tokenizer=self.tokenizer,preprocessor=self.preprocessor,token_pattern=None,stop_words=wordsToIgnore)
+        
         stemmedTexts=[o.stemmedList for o in self.Table]
         vectorizer.fit(stemmedTexts)
-
+        self.vectorizer = vectorizer
         self.trainingVector = vectorizer.transform(stemmedTexts).todense()
         print(self.trainingVector.shape)
+       # quit()
         #print("after transform",self.trainingVector.toarray())
-
+        
         print(self.trainingVector.shape)
+        pickle.dump(vectorizer, open(vectorizerFile, "wb"))
+       # return vectorizer
     def get_rare_words(self,threshold):#self=database
         word_list = []
         for tweet in self.Table:
@@ -152,15 +156,20 @@ class Database:
 
         #print(y_pred)
 
-    def TrainLinearSVM(self):
+    def TrainLinearSVM(self,modelFile):
         #X_train, X_valid, y_train, y_valid = train_test_split(self.trainingVector, self.classVector, test_size = 0.1, shuffle = True)
         scoring = ['precision_macro', 'recall_macro','f1_weighted']
         clf = OneVsOneClassifier(LinearSVC(random_state=0))
         scores = cross_validate(clf,self.trainingVector, self.classVector, scoring=make_scorer(self.classification_report_with_accuracy_score),
                                 cv=10, return_train_score=False)
 
+        model_to_save = OneVsOneClassifier(LinearSVC(random_state=0)).fit(self.trainingVector, self.classVector)
+        filename = modelFile
+        pickle.dump(model_to_save, open(filename, 'wb'))
+
         print("Scores for LinearSVM.....")
         print(scores)
+        return scores
         #clf.fit(X_train,y_train)
         #y_pred = clf.predict(X_valid)
         #print('Linear SVM accuracy: %s' % accuracy_score(y_pred, y_valid))
@@ -182,22 +191,41 @@ class Database:
         #y_pred = clf.predict(X_valid)
         #print('Random forest: accuracy %s' % accuracy_score(y_pred, y_valid))
         #print(classification_report(y_valid, y_pred,target_names=['-1.0','0.0','1.0']))
-	
+    def TrainLogisticRegression(self):
+        clf = RandomForestClassifier(n_estimators=10)
+        scores = cross_validate(clf,self.trainingVector, self.classVector, scoring=make_scorer(self.classification_report_with_accuracy_score),
+                                cv=10, return_train_score=False)
+
+        print("Scores for Random Forest.....")
+        print(scores)
+
+
+    def EvaluateNeuralNet(self):
+        X = self.trainingVector
+        Y = map(int, self.classVector)
+
+        skf = StratifiedKFold(n_splits=10,shuffle=True)
+        skf.get_n_splits(X, Y)
+        print(skf)
+        for train_index, test_index in skf.split(X, Y):
+            print("TRAIN:", train_index, "TEST:", test_index)
+            X_train, X_test = X[train_index], X[test_index]
+            y_train, y_test = Y[train_index], Y[test_index]
+        #for i, (train, test) in enumerate(skf):
+
+
+
     def TrainNeuralNet(self):
         X_train, X_valid, y_train, y_valid = train_test_split(self.trainingVector, self.classVector, test_size = 0.1, shuffle = True)
         numberOfClasses = 3
         batchSize = 64
-        nbEpochs = 10
+        nbEpochs = 2
 
         Y_train = np_utils.to_categorical(y_train, numberOfClasses)
         Y_valid = np_utils.to_categorical(y_valid, numberOfClasses)
 
-
-        #print(Y_train)
-        #print(y_train)
-        #quit()
         model = Sequential()
-        model.add(Dense(1000,input_shape=(10000,)))
+        model.add(Dense(1000,input_shape=(X_train.shape[1],)))
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
         model.add(Dense(500))
@@ -209,12 +237,32 @@ class Database:
         model.add(Dense(numberOfClasses))
         model.add(Activation('softmax'))
         model.compile(loss='categorical_crossentropy', optimizer='adam',metrics=['accuracy'] )
-        print(model.summary())
+
         model.fit(X_train, Y_train,validation_data=(X_valid,Y_valid),batch_size=batchSize,epochs = nbEpochs, verbose=1, )
 
-        #y_pred = model.predict(X_valid, batch_size=batchSize)
-        #print(y_pred)
-        #print(y_valid)
-        #print('Neural Net: accuracy %s' % accuracy_score(y_pred, y_valid))
-        #print(classification_report(y_valid, y_pred,target_names=['-1.0','0.0','1.0']))
+        y_pred = model.predict(X_valid, batch_size=batchSize)
+        y = y_pred.argmax(axis=-1)
+
+            #print(y)
+            #print(y_valid)
+
+        predictedY = []
+        for val in y:
+            if val == 0:
+                predictedY.append(0)
+            elif val == 1:
+                predictedY.append(1)
+            elif val == 2:
+                predictedY.append(-1)
+
+
+        print('Neural Net: accuracy %s' % accuracy_score(predictedY, y_valid))
+        print(classification_report(y_valid, predictedY,target_names=['-1.0','0.0','1.0']))    
+
+
+   
+       
+
+
+            
 

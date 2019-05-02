@@ -185,6 +185,7 @@ class Tweet:
         self.Class=tweet_class;
         self.stemmedList=[]
         self.lemmatizer = nltk.stem.wordnet.WordNetLemmatizer()
+        self.TweetID = None 
 
     def SpellCheck(self):
         spell = Spell()
