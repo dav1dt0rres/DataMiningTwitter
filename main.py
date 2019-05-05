@@ -95,19 +95,26 @@ if __name__ == '__main__':
         counter+=1;
 
     print("Cross validation on Romney Tweets:")
-    romneyDatabase.Vectorizeself('RomneyVectorizer.pickle');
-    romneyDatabase.CreateClassVector()
-    romneyDatabase.TrainLinearSVM('RomneyLinearSVM.pickle')
+   # romneyDatabase.Vectorizeself('RomneyVectorizer.pickle');
+    #romneyDatabase.CreateClassVector()
+    #romneyDatabase.TrainLinearSVM('RomneyLinearSVM.pickle')
     #romneyDatabase.TrainLinearSVM()
     #romneyDatabase.TrainRandomForest()
+    #romneyDatabase.TrainMultinomialNaiveBias()
 
+    print('lksdjfsdlkfjsdlkjfjds')
+    #print(romneyDatabase.classification_report)
+    #romneyDatabase.getAverageScores()
+    #quit()
     print("Cross validation on Obama Tweets:")
     obamaDatabase.Vectorizeself('ObamaVectorizer.pickle');
     #pickle.dump(vectorizer, open("vectorizer.pickle", "wb"))
     obamaDatabase.CreateClassVector()
     #obamaDatabase.TrainMultinomialNaiveBias()
+    obamaDatabase.TrainRandomForest()
+    obamaDatabase.getAverageScores()
     #f= open("ObamaLinear.txt","wt")
-    obamaDatabase.TrainLinearSVM('ObamaLinearSVM.pickle')
+    #obamaDatabase.TrainLinearSVM('ObamaLinearSVM.pickle')
     #obamaDatabase.TrainRandomForest()
     #obamaDatabase.TrainNeuralNet()
     #obamaDatabase.TrainLogisticRegression()

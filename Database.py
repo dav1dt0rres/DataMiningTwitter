@@ -36,6 +36,8 @@ class Database:
         self.Table=[];
         self.classVector=[]
         self.vectorizer=None;
+        self.classification_report = []
+        self.accuracy = []
 
     def LastClean(self,word):
 
@@ -124,7 +126,10 @@ class Database:
 
     def classification_report_with_accuracy_score(self,y_true, y_pred):
 
-        print (classification_report(y_true, y_pred)) # print classification report
+        print (classification_report(y_true, y_pred))
+         # print classification report
+        self.classification_report.append(classification_report(y_true,y_pred, output_dict=True))
+        self.accuracy.append(accuracy_score(y_true, y_pred))
         print(accuracy_score(y_true, y_pred))
         return accuracy_score(y_true, y_pred) # return accuracy score
 
@@ -259,8 +264,56 @@ class Database:
         print('Neural Net: accuracy %s' % accuracy_score(predictedY, y_valid))
         print(classification_report(y_valid, predictedY,target_names=['-1.0','0.0','1.0']))    
 
+    def getAverageScores(self):
+        precisionPositive = 0
+        precisionNegative = 0
+        precisionNeutral = 0
+        recallPositive = 0
+        recallNegative = 0
+        recallNeutral = 0
+        fscorePositive = 0
+        fscoreNegative = 0
+        fscoreNeutral = 0
+        supportPositive = 0
+        supportNegative = 0
+        supportNeutral = 0
 
-   
+        for report in self.classification_report:
+            report_dict = dict(report)
+            precisionPositive = precisionPositive + report_dict['1.0']['precision']
+            precisionNegative = precisionNegative + report_dict['-1.0']['precision']
+            precisionNeutral = precisionNeutral + report_dict['0.0']['precision']
+
+            recallPositive = recallPositive + report_dict['1.0']['recall']
+            recallNegative = recallNegative + report_dict['-1.0']['recall']
+            recallNeutral = recallNeutral + report_dict['0.0']['recall']
+
+            fscorePositive = fscorePositive + report_dict['1.0']['f1-score']
+            fscoreNegative = fscoreNegative + report_dict['-1.0']['f1-score']
+            fscoreNeutral = fscoreNeutral + report_dict['0.0']['f1-score']
+
+            supportPositive = supportPositive + report_dict['1.0']['support']
+            supportNegative = supportNegative + report_dict['-1.0']['support']
+            supportNeutral = supportNeutral + report_dict['0.0']['support']
+
+
+
+
+        print('Average Precision 1:',precisionPositive/10,'-1:',precisionNegative/10,'0',precisionNeutral/10)
+        print('Average Recall 1:',recallPositive/10,'-1:',recallNegative/10,'0',recallNeutral/10)
+        print('Average f1-score 1:',fscorePositive/10,'-1:',fscoreNegative/10,'0',fscoreNeutral/10)
+        print('Average support 1:', supportPositive/10,'-1:',supportNegative/10,'0',supportNeutral/10)
+
+        accuracyTotal = 0
+        for accuracy in self.accuracy:
+            accuracyTotal = accuracyTotal + accuracy
+        print('Average accuracy: ',accuracyTotal/10)
+
+
+
+        
+       
+            
        
 
 
